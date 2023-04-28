@@ -1,0 +1,14 @@
+{
+  "name": "thumbnail-generator",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Max Urrutia",
+  "dependencies": {
+    "serverless-plugin-conditional-functions": "^1.0.0"
+  },
+  "devDependencies": {
+    "serverless": "^3.3.0",
+    "serverless-latest-layer-version": "^2.1.1",
+    "serverless-plugin-git-variables": "^5.2.0"
+  }
+}

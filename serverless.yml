@@ -1,0 +1,53 @@
+service: thumbnail-generator
+
+frameworkVersion: '3'
+
+plugins:
+  - serverless-python-requirements
+custom:
+  pythonRequirements:
+    dockerizePip: False
+    slim: true
+    layer:
+      name: cdp-${self:service}
+      description: "thumbnail generator lambda layer"
+    retain: true
+
+provider:
+  stackName: cdp-${opt:stage, 'dev'}-${self:service}
+  name: aws
+  runtime: python3.9
+  region: ${opt:region, 'us-east-1'}
+  deploymentBucket:
+    name: deployment-bucket
+  environment:
+    stage: ${opt:stage, 'dev'}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:GetObject"
+        - "s3:PutObject"
+        - "s3:PutObjectAcl"
+      Resource: "*"
+
+package:
+  individually: true
+  patterns:
+    - handler.py
+    - '!.git/**'
+    - '!node_modules/**'
+    - '!venv/**'
+    - '!.serverless'
+
+
+functions:
+  track:
+    handler: functions.handler.handler
+    name: ${self:service}-${opt:stage, 'dev'}
+    events:
+      - s3:
+          bucket: images-${opt:stage, 'dev'}
+          event: s3:ObjectCreated:*
+          existing: true
+    layers:
+      - Ref: PythonRequirementsLambdaLayer

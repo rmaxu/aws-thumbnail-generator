@@ -1,0 +1,69 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: "This stack template creates the required s3 buckets for the thumbnail generator"
+
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  Stage:
+    Type: String
+    AllowedValues:
+      - poc
+      - dev
+      - test
+      - stage
+      - prod
+    Default: dev
+    Description: "Stage name to deploy"
+  Version:
+    Type: String
+    Default: "v1"
+    Description: "Version number"
+  ProjectName:
+    Type: String
+    Default: "thumbnail-generator"
+    Description: "Generates a thumbnail for any image"
+
+  Images:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Sub "images-${Stage}"
+      AccessControl: Private
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+      Tags:
+        - Key: "Version"
+          Value: !Ref Version
+        - Key: "Stage"
+          Value: !Ref Stage
+        - Key: "Project"
+          Value: !Ref ProjectName
+
+  Thumbnails:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    Properties:
+      BucketName: !Sub "thumbnails-${Stage}"
+      AccessControl: Private
+      OwnershipControls:
+        Rules:
+          - ObjectOwnership: BucketOwnerEnforced
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: True
+        BlockPublicPolicy: True
+        IgnorePublicAcls: True
+        RestrictPublicBuckets: True
+      Tags:
+        - Key: "Version"
+          Value: !Ref Version
+        - Key: "Stage"
+          Value: !Ref Stage
+        - Key: "Project"
+          Value: !Ref ProjectName

@@ -1,0 +1,7 @@
+valid-formats:
+  - jpg
+  - png
+
+thumbnail-size:
+  height: 90
+  width: 90
